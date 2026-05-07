@@ -22,7 +22,7 @@ jobs:
 
       - name: Build image
         run: |
-          docker build \
+          sudo docker build \
             -t ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }} \
             -t ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest \
             ./
@@ -39,11 +39,11 @@ jobs:
       - name: Login GitHub Container Registry
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | \
-            docker login ${{ env.REGISTRY }} \
+            sudo docker login ${{ env.REGISTRY }} \
               -u ${{ github.actor }} \
               --password-stdin
 
       - name: Push to GHCR
         run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest
+          sudo docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}
+          sudo docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest
