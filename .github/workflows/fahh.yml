@@ -1,0 +1,49 @@
+name: CI Security
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE: ${{ github.repository }}   
+
+jobs:
+  build-scan-push:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write   # nécessaire pour push sur ghcr.io
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: |
+          docker build \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }} \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest \
+            ./
+
+      - name: Scan with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          exit-code: '1'
+          format: 'table'
+
+      - name: Login GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+            docker login ${{ env.REGISTRY }} \
+              -u ${{ github.actor }} \
+              --password-stdin
+
+      - name: Push to GHCR
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest
