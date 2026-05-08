@@ -7,6 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  BASE_IMAGE: 10.6.0.190:80/proxy/nginx:1.27-alpine
 
 jobs:
   build-scan-push:
@@ -24,6 +25,15 @@ jobs:
         env:
           REPO: ${{ github.repository }}
 
+      - name: Scan #1 - Image de base (informatif)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.BASE_IMAGE }}
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          exit-code: '0'        # ← non bloquant, juste un audit
+          format: 'table'
+
       - name: Build image
         run: |
           docker build \
@@ -31,13 +41,13 @@ jobs:
             -t $REGISTRY/$IMAGE:latest \
             ./
 
-      - name: Scan with Trivy
+      - name: Scan #2 - Image finale (bloquant)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
-          exit-code: '1'
+          exit-code: '1'        # ← bloquant, c'est le vrai gate
           format: 'table'
 
       - name: Login GHCR
@@ -47,5 +57,3 @@ jobs:
         run: |
           docker push $REGISTRY/$IMAGE:${{ github.sha }}
           docker push $REGISTRY/$IMAGE:latest
-
-
