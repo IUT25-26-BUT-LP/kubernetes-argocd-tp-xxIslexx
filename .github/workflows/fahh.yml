@@ -7,24 +7,28 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE: ${{ github.repository }}   
 
 jobs:
   build-scan-push:
     runs-on: self-hosted
     permissions:
       contents: read
-      packages: write   # nécessaire pour push sur ghcr.io
+      packages: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set lowercase image name
+        run: echo "IMAGE=${REPO,,}" >> $GITHUB_ENV
+        env:
+          REPO: ${{ github.repository }}
+
       - name: Build image
         run: |
-          sudo docker build \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }} \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest \
+          docker build \
+            -t $REGISTRY/$IMAGE:${{ github.sha }} \
+            -t $REGISTRY/$IMAGE:latest \
             ./
 
       - name: Scan with Trivy
@@ -36,14 +40,11 @@ jobs:
           exit-code: '1'
           format: 'table'
 
-      - name: Login GitHub Container Registry
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | \
-            sudo docker login ${{ env.REGISTRY }} \
-              -u ${{ github.actor }} \
-              --password-stdin
+      - name: Login GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
 
       - name: Push to GHCR
         run: |
-          sudo docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}
-          sudo docker push ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest
+          docker push $REGISTRY/$IMAGE:${{ github.sha }}
+          docker push $REGISTRY/$IMAGE:latest
+
