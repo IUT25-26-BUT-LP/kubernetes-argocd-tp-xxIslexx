@@ -31,7 +31,7 @@ jobs:
           image-ref: ${{ env.BASE_IMAGE }}
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
-          exit-code: '0'        # ← non bloquant, juste un audit
+          exit-code: '1'
           format: 'table'
 
       - name: Build image
@@ -47,7 +47,7 @@ jobs:
           image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ github.sha }}'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
-          exit-code: '1'        # ← bloquant, c'est le vrai gate
+          exit-code: '1'
           format: 'table'
 
       - name: Login GHCR
