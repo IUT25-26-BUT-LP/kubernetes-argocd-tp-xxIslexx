@@ -26,7 +26,7 @@ jobs:
 
       - name: Build image
         run: |
-          docker build \
+          sudo docker build \
             -t $REGISTRY/$IMAGE:${{ github.sha }} \
             -t $REGISTRY/$IMAGE:latest \
             ./
@@ -41,10 +41,11 @@ jobs:
           format: 'table'
 
       - name: Login GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login $REGISTRY -u ${{ github.actor }} --password-stdin
 
       - name: Push to GHCR
         run: |
-          docker push $REGISTRY/$IMAGE:${{ github.sha }}
-          docker push $REGISTRY/$IMAGE:latest
+          sudo docker push $REGISTRY/$IMAGE:${{ github.sha }}
+          sudo docker push $REGISTRY/$IMAGE:latest
+
 
