@@ -34,12 +34,7 @@ Le projet illustre l'approche **GitOps** appliquée au DevSecOps : le dépôt Gi
                                    │ 10.6.0.190:80     │
                                    └───────────────────┘
 ```
-  Le choix de GHCR comme registry de destination s'explique par le contexte de ce TP. Le Harbor mis à disposition par 
-    l'IUT (10.6.0.190:80) est utilisé en mode proxy cache vers Docker Hub : il sert à pull des images officielles, mais 
-    sa configuration ne nous permet pas d'y pousser nos propres images. GHCR offre une alternative car il est gratuit, 
-    intégré nativement à GitHub Actions, et l'authentification se fait automatiquement via le GITHUB_TOKEN sans avoir 
-    à gérer de credentials supplémentaires. Dans ce contexte, on imagine que notre cluster tire par la suite ses images 
-    depuis GHCR pour boucler la chaîne GitOps.
+  Le choix de GHCR comme registry de destination s'explique par le contexte de ce TP. Le Harbor mis à disposition par l'IUT (10.6.0.190:80) est utilisé en mode proxy cache vers Docker Hub : il sert à pull des images officielles, mais sa configuration ne nous permet pas d'y pousser nos propres images. GHCR offre une alternative car il est gratuit, intégré nativement à GitHub Actions, et l'authentification se fait automatiquement via le GITHUB_TOKEN sans avoir à gérer de credentials supplémentaires. Dans ce contexte, on imagine que notre cluster tire par la suite ses images depuis GHCR pour boucler la chaîne GitOps.
 
 ## Composants
 
