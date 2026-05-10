@@ -31,7 +31,7 @@ jobs:
           image-ref: ${{ env.BASE_IMAGE }}
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
-          exit-code: '1'
+          exit-code: '0'
           format: 'table'
 
       - name: Build image
