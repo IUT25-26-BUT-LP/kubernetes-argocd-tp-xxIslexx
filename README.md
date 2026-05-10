@@ -103,7 +103,7 @@ Le workflow `fahh.yml` se déclenche à chaque push sur `main` (ou manuellement 
 
 1. **Checkout** du dépôt
 2. **Mise en minuscules** du nom de l'image (contrainte GHCR)
-3. **Scan #1 — informatif** : Trivy analyse l'image de base `nginx:1.27-alpine` et remonte les CVE héritées de l'upstream sans bloquer (`exit-code: 0`)
+3. **Scan #1 — informatif** : Trivy analyse l'image de base `nginx:alpine` et remonte les CVE héritées de l'upstream sans bloquer (`exit-code: 0`)
 4. **Build** de l'image custom à partir du Dockerfile
 5. **Scan #2 — bloquant** : Trivy analyse l'image finale après durcissement. Toute CVE `HIGH` ou `CRITICAL` corrigeable provoque l'échec du job (`exit-code: 1`)
 6. **Login** sur GHCR via `GITHUB_TOKEN`
