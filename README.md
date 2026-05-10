@@ -89,11 +89,10 @@ Récupération du mot de passe admin et accès à l'interface :
 
 ```bash
 kubectl port-forward svc/argocd-server -n argocd 8080:443
-kubectl get secret argocd-initial-admin-secret -n argocd \
-  -o jsonpath="{.data.password}" | base64 -d && echo
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d && echo
 ```
 
-L'interface est accessible sur https://localhost:8080 avec l'utilisateur `admin`.
+L'interface est accessible sur https://localhost:8080 avec l'utilisateur `admin`. (En cas de problème d'accès, tester au préalable avec un curl pour valider la connectivité.)
 
 ### 3. Déclaration de l'application ArgoCD
 
